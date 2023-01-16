@@ -6,10 +6,28 @@
     <% if (locals.user.email_verified) { %>
         <p>You are logged in. <a href="/profile" class="underline">View your profile</a>.</p>
     <% } else { %>
-        <p>Your email doesn't verify. <a href="/profile" class="underline">Verify Your email</a>.</p>
+        <p>Your email doesn't verify. <button id="myBtn" onclick="sendVerficationEmail()" style="text-decoration: underline; color: #069; border: none; background: none!important;">Verify Your email</button></p>
     <% } %>
 <% } else { %>
     <p>You are not logged in. <a href="/login" class="underline">Login</a>.</p>
 <% } %>
+
+<script>
+  // Get the button that opens the modal
+  function sendVerficationEmail() {
+    const xhr = new XMLHttpRequest();
+      xhr.open('POST',`/email`, false);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhr.send(JSON.stringify({ type: 'verification', email: '' }));
+
+      //狀態碼:200代表成功。我們利用此狀態碼去做判斷，做到錯誤處理
+      if(xhr.status === 200){
+        console.log(JSON.parse(xhr.responseText));
+        location.reload();
+      } else{
+        console.log('請求失敗!')
+      }
+  }
+</script>
 
 <%- include('partials/footer') -%>

@@ -1,4 +1,4 @@
-const dotenv = require('dotenv');
+require('dotenv').config();
 const { auth } = require('express-openid-connect');
 const express = require('express');
 const http = require('http');
@@ -6,7 +6,7 @@ const logger = require('morgan');
 const path = require('path');
 const router = require('./routes/index');
 
-dotenv.load();
+// dotenv.load();
 
 const app = express();
 
@@ -27,7 +27,8 @@ const config = {
   clientSecret: CLIENT_SECRET,
   authorizationParams: {
     response_type: 'code id_token',
-    scope: 'openid profile email read:products',
+    // audience: `${ISSUER_BASE_URL}/users`,
+    scope: 'openid profile email offline_access update:users',
   },
 };
 

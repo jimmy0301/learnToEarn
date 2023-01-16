@@ -1,16 +1,77 @@
 <%- include('partials/header') -%>
 
-  <h1 class="text-4xl mb-4">Welcome <%= user.nickname %></h1>
+  <h1 class="text-4xl mb-4">Welcome <%= userData.name %></h1>
 
-  <% if (user.picture) { %>
-    <img class="block py-3" src="<%= user.picture %>" width="300">
+  <% if (userData.picture) { %>
+    <img class="block py-3" src="<%= userData.picture %>" width="300">
   <% } %>
-  
-  <p class="py-3">
-    This is the content of <code class="bg-gray-200">req.user</code>.<br>
-    <strong>Note:</strong> <code class="bg-gray-200">_raw</code> and <code class="bg-gray-200">_json</code> properties have been omitted.
-  </p>
 
-  <pre class="block bg-gray-300 p-4 text-sm overflow-scroll"><%= userProfile %></pre>
+  <pre class="block bg-gray-300 p-4 text-sm overflow-scroll">
+    Name: <%= userData.name %> (<button id="myBtn" onclick="openModal()" style="text-decoration: underline; color: #069; border: none; background: none!important;">Edit</button>)
+    Email: <%= userData.email %>
+  </pre>
+
+  <div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+        <input type="hidden" id="userId" value="<%= userData.sub %>">
+        Name: <input type="text" id="name" style="border-color:green;border-width:3px;" value="<%= userData.name %>" /><br>
+          <button type="button" class="btn" id="submitBtn">Confirm</button>
+          <button type="button" class="btn" id="cancelBtn" >Cancel</button>
+    </div>
+
+  </div>
+
+  <script>
+    const modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    const btn = document.getElementById("myBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const inputName = document.getElementById("name");
+    const inputUserId = document.getElementById("userId");
+
+    // Get the <span> element that closes the modal
+    const span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    function openModal() {
+      modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    submitBtn.onclick = function() {
+      // alert(inputName.value);
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT',`/users/${inputUserId.value}`, false);
+      xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xhr.send(JSON.stringify({ name: inputName.value }));
+
+      //狀態碼:200代表成功。我們利用此狀態碼去做判斷，做到錯誤處理
+      if(xhr.status === 200){
+        console.log(JSON.parse(xhr.responseText));
+        location.reload();
+      } else{
+        console.log('請求失敗!')
+      }
+    }
+
+    cancelBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+  </script>
 
 <%- include('partials/footer') -%>
